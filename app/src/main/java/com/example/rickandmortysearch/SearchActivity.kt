@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import com.example.rickandmortysearch.databinding.ActivitySearchBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchByName(query: String) {
+        //cuando le damos a buscar es cuando ejecuto el progress bar
+        binding.progressBar.isVisible = true
         //todas las llamadas a apis van dentro de corroutinas, io es el hilo secundario
         CoroutineScope(Dispatchers.IO).launch {
             //a partir de aqui to do va dentro de la coroutina
@@ -54,6 +57,12 @@ class SearchActivity : AppCompatActivity() {
             if (myResponse.isSuccessful) {
                 //si lo es, imprimimos el logcat y accedemos al body
                 Log.i("martin", "funciona :D")
+
+                //si fue exitoso escondo la progress bar, pero en el HILO PRINCIPAL
+                runOnUiThread {
+                    binding.progressBar.isVisible = false
+                }
+
                 val response: SuperHeroDataResponse? = myResponse.body()
                 if(response != null){
                     Log.i("martin", response.toString())
