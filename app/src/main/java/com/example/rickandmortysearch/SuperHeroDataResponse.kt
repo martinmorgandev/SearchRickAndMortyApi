@@ -13,3 +13,4 @@ data class SuperHeroItemResponse(
     @SerializedName("id") val superHeroId: String,
     @SerializedName("name") val name: String
 )
+

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmortysearch.databinding.ActivitySearchBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var retrofit:Retrofit
+    private lateinit var adapter: SuperHeroAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -43,6 +45,11 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         )
+
+        adapter = SuperHeroAdapter()
+        binding.rvSuperhero.setHasFixedSize(true)
+        binding.rvSuperhero.layoutManager = LinearLayoutManager(this)
+        binding.rvSuperhero.adapter = adapter
     }
 
     private fun searchByName(query: String) {
@@ -57,15 +64,15 @@ class SearchActivity : AppCompatActivity() {
             if (myResponse.isSuccessful) {
                 //si lo es, imprimimos el logcat y accedemos al body
                 Log.i("martin", "funciona :D")
-
-                //si fue exitoso escondo la progress bar, pero en el HILO PRINCIPAL
-                runOnUiThread {
-                    binding.progressBar.isVisible = false
-                }
-
                 val response: SuperHeroDataResponse? = myResponse.body()
+
                 if(response != null){
                     Log.i("martin", response.toString())
+                    //si fue exitoso escondo la progress bar, pero en el HILO PRINCIPAL
+                    runOnUiThread {
+                        adapter.updateList(response.superHeroes)
+                        binding.progressBar.isVisible = false
+                    }
                 }
             } else
                 Log.i("martin", "non funciona :(")
