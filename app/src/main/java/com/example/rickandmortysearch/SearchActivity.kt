@@ -1,11 +1,13 @@
 package com.example.rickandmortysearch
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rickandmortysearch.DetailSuperheroActivity.Companion.EXTRA_ID
 import com.example.rickandmortysearch.databinding.ActivitySearchBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
             }
         )
 
-        adapter = SuperHeroAdapter()
+        adapter = SuperHeroAdapter{navigateToDetail(it)}
         binding.rvSuperhero.setHasFixedSize(true)
         binding.rvSuperhero.layoutManager = LinearLayoutManager(this)
         binding.rvSuperhero.adapter = adapter
@@ -88,5 +90,11 @@ class SearchActivity : AppCompatActivity() {
             .build()
 
         return retrofit
+    }
+
+    private fun navigateToDetail(id:String){
+        val intent = Intent(this, DetailSuperheroActivity::class.java)
+        intent.putExtra(EXTRA_ID, id)
+        startActivity(intent)
     }
 }
